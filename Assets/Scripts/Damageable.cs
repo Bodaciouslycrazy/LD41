@@ -4,10 +4,26 @@ using UnityEngine;
 
 public class Damageable : MonoBehaviour {
 
+    public const int BLUE = 0;
+    public const int GREEN = 1;
+    public const int RED = 2;
+
     [SerializeField]
-    private int MaxHealth = 5;
+    protected int MaxHealth = 5;
     [SerializeField]
-    private int Health = 5;
+    protected int Health = 5;
+
+    private int Color = GREEN;
+
+    public virtual int GetColor()
+    {
+        return Color;
+    }
+
+    public virtual void SetColor(int col)
+    {
+        Color = col;
+    }
 
 	public virtual int Damage(int amt)
     {

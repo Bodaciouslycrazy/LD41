@@ -10,6 +10,8 @@ public class Player : Damageable, IBeatListener {
     [SerializeField]
     [Range(0, .5f)]
     private float BeatWindow = .2f;
+    [SerializeField]
+    private float BeatSync = 0f;
 
     protected BeatGenerator generator;
 
@@ -21,15 +23,24 @@ public class Player : Damageable, IBeatListener {
     [SerializeField]
     private AudioClip soundMissBeat;
 
+    [Header("Prefs")]
+    [SerializeField]
+    private GameObject LazerShootPref;
+    [SerializeField]
+    private GameObject LazerBeamPref;
+    [SerializeField]
+    private GameObject LazerHitPref;
+
 	// Use this for initialization
 	void Start () {
         generator = BeatGenerator.GetSingleton();
         generator.AddListener(this);
 	}
-	
+
+
 	// Update is called once per frame
 	void Update () {
-
+    
         //Get input axies
         float horz = Input.GetAxis("Horizontal");
         float vert = Input.GetAxis("Vertical");
@@ -43,11 +54,9 @@ public class Player : Damageable, IBeatListener {
 
 
         //Check for firing on beat
-        bool blue = Input.GetKeyDown(KeyCode.LeftArrow);
-        bool green = Input.GetKeyDown(KeyCode.DownArrow);
-        bool red = Input.GetKeyDown(KeyCode.RightArrow);
+        int col = GetColorShot();
 
-        if( Fired == false && (blue || green || red ) )
+        if( Fired == false && col != -1 )
         {
             //Consume shot, even if it wasn't on beat.
             Fired = true;
@@ -59,6 +68,22 @@ public class Player : Damageable, IBeatListener {
             {
                 //Fire on time!
                 GetComponent<AudioSource>().PlayOneShot(soundFire, 1f);
+
+                //Do the raycast
+                RaycastHit2D hit = Physics2D.Raycast((Vector2)transform.position, new Vector2(0, 1), 50f);
+                Vector2 startLazer = (Vector2)transform.position + new Vector2(0, 1f);
+                float lazDist = hit.distance == 0 ? 50 : hit.distance - .5f;
+                Vector2 endLazer = (Vector2)transform.position + new Vector2(0, lazDist);
+                ShootLazer(col, startLazer, endLazer);
+
+                if (hit.transform != null)
+                {
+                    Damageable other = hit.transform.gameObject.GetComponent<Damageable>();
+                    if(other != null && other.GetColor() == col)
+                    {
+                        other.Damage(1);
+                    }
+                }
             }
             else
             {
@@ -67,6 +92,45 @@ public class Player : Damageable, IBeatListener {
             }
         }
 	}
+
+    private int GetColorShot()
+    {
+        bool blue = Input.GetKeyDown(KeyCode.LeftArrow);
+        bool green = Input.GetKeyDown(KeyCode.DownArrow);
+        bool red = Input.GetKeyDown(KeyCode.RightArrow);
+
+        if (blue)
+            return Damageable.BLUE;
+        else if (green)
+            return Damageable.GREEN;
+        else if (red)
+            return Damageable.RED;
+        else
+            return -1;
+    }
+
+    private void ShootLazer(int num, Vector2 start, Vector2 end)
+    {
+        Color c = new Color();
+        if (num == Damageable.RED)
+            c = Color.red;
+        else if (num == Damageable.GREEN)
+            c = Color.green;
+        else if (num == Damageable.BLUE)
+            c = Color.blue;
+        else
+            c = Color.white;
+
+        GameObject obj = Instantiate(LazerShootPref, start, transform.rotation);
+        obj.GetComponent<SpriteRenderer>().color = c;
+
+        obj = Instantiate(LazerHitPref, end, transform.rotation);
+        obj.GetComponent<SpriteRenderer>().color = c;
+
+        obj = Instantiate(LazerBeamPref, Vector2.Lerp(start, end, 0.5f), transform.rotation);
+        obj.GetComponent<Transform>().localScale = new Vector3(1, Vector2.Distance(start, end)  , 1);
+        obj.GetComponent<SpriteRenderer>().color = c;
+    }
 
     public void OnBeat()
     {
