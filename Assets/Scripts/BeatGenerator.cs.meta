@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 6a354d7844256dd4db8f741708532fae
+timeCreated: 1524273211
+licenseType: Free
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - MetronomeSound: {fileID: 8300000, guid: 82f1398c8ac3792499643a329d507ea6, type: 3}
+  executionOrder: -100
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
