@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Player : Damageable, IBeatListener {
 
+    public static Player Singleton;
+
     [SerializeField]
     private float MaxSpeed = 8f;
 
@@ -22,6 +24,12 @@ public class Player : Damageable, IBeatListener {
     private AudioClip soundFire;
     [SerializeField]
     private AudioClip soundMissBeat;
+    [SerializeField]
+    private AudioClip soundDamage;
+    [SerializeField]
+    private AudioClip soundKill;
+    //[SerializeField]
+    //private AudioClip soundWrongColor;
 
     [Header("Prefs")]
     [SerializeField]
@@ -30,9 +38,20 @@ public class Player : Damageable, IBeatListener {
     private GameObject LazerBeamPref;
     [SerializeField]
     private GameObject LazerHitPref;
+    [SerializeField]
+    private GameObject OffBeatPref;
 
 	// Use this for initialization
 	void Start () {
+        if(Singleton == null)
+        {
+            Singleton = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
         generator = BeatGenerator.GetSingleton();
         generator.AddListener(this);
 	}
@@ -71,7 +90,7 @@ public class Player : Damageable, IBeatListener {
 
                 //Do the raycast
                 RaycastHit2D hit = Physics2D.Raycast((Vector2)transform.position, new Vector2(0, 1), 50f);
-                Vector2 startLazer = (Vector2)transform.position + new Vector2(0, 1f);
+                Vector2 startLazer = (Vector2)transform.position + new Vector2(0, .5f);
                 float lazDist = hit.distance == 0 ? 50 : hit.distance - .5f;
                 Vector2 endLazer = (Vector2)transform.position + new Vector2(0, lazDist);
                 ShootLazer(col, startLazer, endLazer);
@@ -89,6 +108,7 @@ public class Player : Damageable, IBeatListener {
             {
                 //Missed the fire window...
                 GetComponent<AudioSource>().PlayOneShot(soundMissBeat, 1f);
+                Instantiate(OffBeatPref, transform.position + new Vector3(0,2,0), Quaternion.identity);
             }
         }
 	}
@@ -111,6 +131,10 @@ public class Player : Damageable, IBeatListener {
 
     private void ShootLazer(int num, Vector2 start, Vector2 end)
     {
+        //Shake Camera
+        CameraShake.ShakeCamera(.1f);
+
+        //Insatntiate lazer
         Color c = new Color();
         if (num == Damageable.RED)
             c = Color.red;
@@ -128,7 +152,7 @@ public class Player : Damageable, IBeatListener {
         obj.GetComponent<SpriteRenderer>().color = c;
 
         obj = Instantiate(LazerBeamPref, Vector2.Lerp(start, end, 0.5f), transform.rotation);
-        obj.GetComponent<Transform>().localScale = new Vector3(1, Vector2.Distance(start, end)  , 1);
+        obj.GetComponent<Transform>().localScale = new Vector3(1, Vector2.Distance(start, end) + .75f  , 1);
         obj.GetComponent<SpriteRenderer>().color = c;
     }
 
@@ -165,6 +189,10 @@ public class Player : Damageable, IBeatListener {
     {
         //play sound?
 
+        SoundMaker2D.Singleton.PlayClipAtPoint(soundDamage, transform.position, 1f);
+
+        CameraShake.ShakeCamera(.2f);
+
         return base.Damage(amt);
     }
 
@@ -172,7 +200,11 @@ public class Player : Damageable, IBeatListener {
     {
         //play sound?
 
+        SoundMaker2D.Singleton.PlayClipAtPoint(soundKill, transform.position, 1f);
+
         generator.RemoveListener(this);
+
+        Singleton = null;
 
         base.Kill();
     }

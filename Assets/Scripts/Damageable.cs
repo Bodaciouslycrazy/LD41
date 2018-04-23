@@ -13,6 +13,7 @@ public class Damageable : MonoBehaviour {
     [SerializeField]
     protected int Health = 5;
 
+    [SerializeField]
     private int Color = GREEN;
 
     public virtual int GetColor()
@@ -23,6 +24,16 @@ public class Damageable : MonoBehaviour {
     public virtual void SetColor(int col)
     {
         Color = col;
+    }
+
+    public virtual int GetHealth()
+    {
+        return Health;
+    }
+
+    public virtual int GetMaxHealth()
+    {
+        return MaxHealth;
     }
 
 	public virtual int Damage(int amt)

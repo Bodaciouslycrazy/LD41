@@ -8,15 +8,23 @@ public class BeatGenerator : MonoBehaviour {
     protected static BeatGenerator Singleton;
 
     [SerializeField]
+    private AudioClip mainSong;
+
+    [SerializeField]
     protected double BPM = 160.0;
     protected double nextBeat = 0;
     protected double nextUpbeat = 0;
+
+    [SerializeField]
+    private AudioSource MetronomePlayer;
+    [SerializeField]
+    private AudioSource MusicPlayer;
+
 
     protected List<IBeatListener> Listeners;
 
     [SerializeField]
     protected bool PlayMetronome = true;
-    protected AudioSource MetronomePlayer;
     protected bool tickPlayed = false;
 
     public bool running = true;
@@ -41,9 +49,21 @@ public class BeatGenerator : MonoBehaviour {
         MetronomePlayer = GetComponent<AudioSource>();
 
         //Set up timing
-        nextBeat = AudioSettings.dspTime;
-        nextUpbeat = nextBeat + ((60.0 / BPM) / 2.0);
+        //nextBeat = AudioSettings.dspTime;
+        //nextUpbeat = nextBeat + ((60.0 / BPM) / 2.0);
+        StartSong(120.0, mainSong, .01, 0);
 	}
+
+    public void StartSong( double bpm, AudioClip song, double delay, double offset)
+    {
+        BPM = bpm;
+
+        nextBeat = AudioSettings.dspTime + delay;
+        nextUpbeat = nextBeat + ((60.0 / BPM) / 2.0);
+
+        MusicPlayer.clip = song;
+        MusicPlayer.PlayScheduled(nextBeat + offset);
+    }
 
     public static BeatGenerator GetSingleton()
     {
@@ -54,6 +74,12 @@ public class BeatGenerator : MonoBehaviour {
 	void Update () {
         if (!running)
             return;
+
+        if(!MusicPlayer.isPlaying)
+        {
+            //Start song again!
+            StartSong(BPM, MusicPlayer.clip, .01, 0);
+        }
 
         if(AudioSettings.dspTime >= nextBeat)
         {
@@ -72,7 +98,7 @@ public class BeatGenerator : MonoBehaviour {
             nextUpbeat += (60.0 / BPM);
         }
 
-        if (tickPlayed && !MetronomePlayer.isPlaying)
+        if (PlayMetronome && tickPlayed && !MetronomePlayer.isPlaying)
         {
             tickPlayed = false;
             MetronomePlayer.PlayScheduled(nextBeat);

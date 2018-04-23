@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 0e20fa324a02c1745aa5ab2063977ec1
+timeCreated: 1524368930
+licenseType: Free
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - RedShipPref: {fileID: 1646457184499046, guid: 42cc4d3894a00f249a3c7a7ae27a6bc6,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

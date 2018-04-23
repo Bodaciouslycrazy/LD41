@@ -4,29 +4,38 @@ using UnityEngine;
 
 public class Bullet : Damageable {
 
-    private float Timeout = 5f;
+    private const float BoundLeft = -10f;
+    private const float BoundRight = 10f;
+    private const float BoundUp = 7f;
+    private const float BoundDown = -7f;
 
     [SerializeField]
     private AudioClip destroySound;
 
-	// Use this for initialization
-	void Start () {
-        Timeout = Time.time + Timeout;
-        MaxHealth = 1;
-        Health = 1;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		if(Time.time > Timeout)
+
+    private float debugSpeed = 0;
+
+    //Fixed update called less, will cause less lag.
+    private void FixedUpdate()
+    {
+
+        Vector2 pos = transform.position;
+
+        if (pos.x < BoundLeft || pos.x > BoundRight || pos.y < BoundDown || pos.y > BoundUp)
         {
             Destroy(gameObject);
         }
-	}
+    }
 
     public void SetMotion(Vector2 vel)
     {
+        debugSpeed = vel.magnitude;
         GetComponent<Rigidbody2D>().velocity = vel;
+    }
+
+    public void SetMotion(float ang, float speed)
+    {
+        SetMotion( new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * speed);
     }
 
     public override void Kill()
