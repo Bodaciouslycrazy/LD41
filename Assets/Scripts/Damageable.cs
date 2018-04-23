@@ -36,8 +36,11 @@ public class Damageable : MonoBehaviour {
         return MaxHealth;
     }
 
-	public virtual int Damage(int amt)
+	public virtual int Damage(int amt, int damColor)
     {
+        if (damColor != Color)
+            return Health;
+
         Health -= amt;
 
         if(Health <= 0)

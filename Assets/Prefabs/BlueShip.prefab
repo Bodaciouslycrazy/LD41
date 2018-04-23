@@ -212,7 +212,8 @@ MonoBehaviour:
   soundDamage: {fileID: 8300000, guid: 51a53d7892e060d4cbe659128da390dd, type: 3}
   soundDestroy: {fileID: 8300000, guid: 2e83a33a49d727542868de3566b56fb3, type: 3}
   soundFire: {fileID: 8300000, guid: 276853d11732b1248826b7e9b0bf70e2, type: 3}
-  MoveSpeed: 7
+  soundDeflect: {fileID: 8300000, guid: 5212ae1c2ba3156489a7723403943fd7, type: 3}
+  MoveSpeed: 2
 --- !u!212 &212531476892046148
 SpriteRenderer:
   m_ObjectHideFlags: 1

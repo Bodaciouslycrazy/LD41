@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour {
 
+    public static bool Running = false;
+
     private static List<Enemy> Enemies;
 
     public GameObject RedShipPref;
@@ -33,13 +35,15 @@ public class EnemySpawner : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if (!Running)
+            return;
 
         PhaseTime += Time.deltaTime;
 
         if(Phase == 0)
         {
             //Placeholders?
-
+            BeatGenerator.GetSingleton().StartSong(120.0, BeatGenerator.GetSingleton().mainSong, .2, -.03);
             NextPhase();
         }
         else if(Phase == 1) //One small ship
@@ -203,6 +207,11 @@ public class EnemySpawner : MonoBehaviour {
                 NextPhase();
                 //New Song?
             }
+        }
+        else
+        {
+            UIState.Singleton.SetState(UIState.State.WIN);
+            //Show YOU WIN screen
         }
 	}
 

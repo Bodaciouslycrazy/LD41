@@ -17,6 +17,8 @@ public class Player : Damageable, IBeatListener {
 
     protected BeatGenerator generator;
 
+    public static bool Freeze = true;
+
     private bool Fired = false;
 
     [Header("Sounds")]
@@ -56,10 +58,34 @@ public class Player : Damageable, IBeatListener {
         generator.AddListener(this);
 	}
 
+    public void FixedUpdate()
+    {
+        if (Freeze)
+            return;
 
-	// Update is called once per frame
-	void Update () {
+        //Get input axies
+        float horz = Input.GetAxis("Horizontal");
+        float vert = Input.GetAxis("Vertical");
+
+        //Calculate movement
+        //if input is keyboard
+        float xCirc = horz * Mathf.Sqrt(1f - (Mathf.Pow(vert, 2) / 2f));
+        float yCirc = vert * Mathf.Sqrt(1f - (Mathf.Pow(horz, 2) / 2f));
+
+        GetComponent<Rigidbody2D>().velocity = new Vector2(xCirc, yCirc) * MaxSpeed;
+    }
+
+
+    // Update is called once per frame
+    void Update () {
     
+        if(Freeze)
+        {
+
+            return;
+        }
+
+        /*
         //Get input axies
         float horz = Input.GetAxis("Horizontal");
         float vert = Input.GetAxis("Vertical");
@@ -70,6 +96,7 @@ public class Player : Damageable, IBeatListener {
         float yCirc = vert * Mathf.Sqrt(1f - (Mathf.Pow(horz, 2) / 2f) );
 
         GetComponent<Rigidbody2D>().velocity = new Vector2(xCirc, yCirc) * MaxSpeed;
+        */
 
 
         //Check for firing on beat
@@ -98,9 +125,9 @@ public class Player : Damageable, IBeatListener {
                 if (hit.transform != null)
                 {
                     Damageable other = hit.transform.gameObject.GetComponent<Damageable>();
-                    if(other != null && other.GetColor() == col)
+                    if(other != null)
                     {
-                        other.Damage(1);
+                        other.Damage(1, col);
                     }
                 }
             }
@@ -180,12 +207,12 @@ public class Player : Damageable, IBeatListener {
             Destroy(collision.gameObject);
 
             //Hurt self
-            Damage(1);
+            Damage(1,GetColor());
         }
     }
 
     //Methods from Damageable
-    public override int Damage(int amt)
+    public override int Damage(int amt, int damColor)
     {
         //play sound?
 
@@ -193,7 +220,7 @@ public class Player : Damageable, IBeatListener {
 
         CameraShake.ShakeCamera(.2f);
 
-        return base.Damage(amt);
+        return base.Damage(amt, damColor);
     }
 
     public override void Kill()
@@ -205,7 +232,7 @@ public class Player : Damageable, IBeatListener {
         generator.RemoveListener(this);
         Singleton = null;
 
-        GameOver.IsGameOver = true;
+        UIState.Singleton.SetState(UIState.State.LOSE);
 
         base.Kill();
     }

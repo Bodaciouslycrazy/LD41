@@ -7,6 +7,8 @@ public class BossShip : Enemy, IBeatListener, IPositionable
 
     [SerializeField]
     private GameObject BulletPref;
+    [SerializeField]
+    private SpriteRenderer[] HealthSprites;
 
     [Header("Sounds")]
     [SerializeField]
@@ -25,6 +27,7 @@ public class BossShip : Enemy, IBeatListener, IPositionable
     private int BeatCount = 2;
     private int CurrentBeat = 0;
 
+    [Header("Speeds")]
     [SerializeField]
     private float MoveSpeed = 5f;
     [SerializeField]
@@ -36,9 +39,12 @@ public class BossShip : Enemy, IBeatListener, IPositionable
     private bool ShotThisBeat = false;
     private int ConsecutiveShots = 0;
 
+    private Rigidbody2D rb;
+
     // Use this for initialization
     new void Start()
     {
+        rb = GetComponent<Rigidbody2D>();
         //Random.InitState((int)System.DateTime.Now.Ticks);
         //CurrentBeat = Random.Range(0, 4);
         SetColor(1);
@@ -72,11 +78,17 @@ public class BossShip : Enemy, IBeatListener, IPositionable
     // Update is called once per frame
     void Update()
     {
+        
+    }
+
+    public void FixedUpdate()
+    {
+
         float dx = WaveDistance * Mathf.Sin(Time.time * WaveSpeed * 2 * Mathf.PI);
 
         Vector2 realTarget = TargetPos + new Vector2(dx, 0);
 
-        GetComponent<Rigidbody2D>().MovePosition(Vector2.MoveTowards(transform.position, realTarget, MoveSpeed * Time.deltaTime));
+        rb.MovePosition(Vector2.MoveTowards(transform.position, realTarget, MoveSpeed * Time.fixedDeltaTime));
     }
 
 
@@ -128,40 +140,55 @@ public class BossShip : Enemy, IBeatListener, IPositionable
             ConsecutiveShots = 0;
 
             //Play bad sound.
-            GetComponent<AudioSource>().clip = soundComboEnd;
-            GetComponent<AudioSource>().Play();
+            SoundMaker2D.Singleton.PlayClipAtPoint(soundComboEnd, transform.position);
         }
 
         ShotThisBeat = false;
     }
 
-
-    public override int Damage(int amt)
+    private void ShowHealth(int h)
     {
-        ShotThisBeat = true;
-        ConsecutiveShots++;
-        SetColor(Random.Range(0, 3));
-
-        if (ConsecutiveShots == 1)
-            GetComponent<AudioSource>().clip = soundComboOne;
-        else if (ConsecutiveShots == 2)
-            GetComponent<AudioSource>().clip = soundComboTwo;
-        else if (ConsecutiveShots == 3)
-            GetComponent<AudioSource>().clip = soundComboThree;
-
-        GetComponent<AudioSource>().Play();
-
-        if( ConsecutiveShots >= 3)
+        for(int i = 0; i < HealthSprites.Length; i++)
         {
-            //ACTUALLY DO DAMAGE
+            HealthSprites[i].enabled = (i <= h - 1);
+        }
+    }
+
+    public override int Damage(int amt, int damColor)
+    {
+        if (damColor == GetColor())
+        {
+            ShotThisBeat = true;
+            ConsecutiveShots++;
+
+            if (ConsecutiveShots == 1)
+                SoundMaker2D.Singleton.PlayClipAtPoint(soundComboOne, transform.position, 1f);
+            else if (ConsecutiveShots == 2)
+                SoundMaker2D.Singleton.PlayClipAtPoint(soundComboTwo, transform.position, 1f);
+            else if (ConsecutiveShots == 3)
+                SoundMaker2D.Singleton.PlayClipAtPoint(soundComboThree, transform.position, 1f);
+
+
+            if (ConsecutiveShots >= 3)
+            {
+                //ACTUALLY DO DAMAGE
+                ConsecutiveShots = 0;
+
+                base.Damage(amt, damColor);
+
+                ShowHealth(Health);
+            }
+        }
+        else
+        {
+            ShotThisBeat = false;
             ConsecutiveShots = 0;
 
-            Health--;
-            if (Health <= 0)
-                Kill();
+            SoundMaker2D.Singleton.PlayClipAtPoint(soundComboEnd, transform.position);
         }
 
-        //return base.Damage(amt);
+
+        SetColor(Random.Range(0, 3));
         return Health;
     }
 

@@ -15,6 +15,8 @@ public class SmallShip : Enemy, IBeatListener, IPositionable
     private AudioClip soundDestroy;
     [SerializeField]
     private AudioClip soundFire;
+    [SerializeField]
+    private AudioClip soundDeflect;
 
     private int BeatCount = 4;
     private int CurrentBeat = 0;
@@ -25,6 +27,8 @@ public class SmallShip : Enemy, IBeatListener, IPositionable
 
     private static int NEXT_COLOR = 1;
 
+    private Rigidbody2D rb;
+
     // Use this for initialization
     new void Start()
     {
@@ -32,6 +36,8 @@ public class SmallShip : Enemy, IBeatListener, IPositionable
         //CurrentBeat = Random.Range(0, 4);
         SetColor(NEXT_COLOR);
         NEXT_COLOR = (NEXT_COLOR + 1) % 3;
+
+        rb = GetComponent<Rigidbody2D>();
 
         base.Start();
         BeatGenerator.GetSingleton().AddListener(this);
@@ -63,8 +69,21 @@ public class SmallShip : Enemy, IBeatListener, IPositionable
     // Update is called once per frame
     void Update()
     {
-        //Debug.Log("Speed: " + MoveSpeed);
+        /*
+        Vector2 oldPos = transform.position;
+
         GetComponent<Rigidbody2D>().MovePosition(Vector2.MoveTowards(transform.position, TargetPos, MoveSpeed * Time.deltaTime));
+
+        Vector2 newPos = transform.position;
+
+        if (Vector2.Distance(oldPos, newPos) < MoveSpeed * Time.deltaTime - .05f)
+            transform.GetChild(0).GetComponent<SpriteRenderer>().color = new Color(1, 0, 1);
+        */
+    }
+
+    public void FixedUpdate()
+    {
+        rb.MovePosition(Vector2.MoveTowards(transform.position, TargetPos, MoveSpeed * Time.fixedDeltaTime));
     }
 
 
@@ -120,12 +139,20 @@ public class SmallShip : Enemy, IBeatListener, IPositionable
     }
 
 
-    public override int Damage(int amt)
+    public override int Damage(int amt, int damColor)
     {
-        GetComponent<AudioSource>().clip = soundDamage;
+        if (damColor == GetColor())
+        {
+            GetComponent<AudioSource>().clip = soundDamage;
+        }
+        else
+        {
+            GetComponent<AudioSource>().clip = soundDeflect;
+        }
+
         GetComponent<AudioSource>().Play();
 
-        return base.Damage(amt);
+        return base.Damage(amt, damColor);
     }
 
     public override void Kill()

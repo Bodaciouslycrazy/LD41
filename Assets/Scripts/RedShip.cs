@@ -14,6 +14,8 @@ public class RedShip : Enemy, IBeatListener, IPositionable{
     private AudioClip soundDestroy;
     [SerializeField]
     private AudioClip soundFire;
+    [SerializeField]
+    private AudioClip soundDeflect;
 
     private int BeatCount = 6;
     private int CurrentBeat = 0;
@@ -22,9 +24,12 @@ public class RedShip : Enemy, IBeatListener, IPositionable{
     private float MoveSpeed = 5f;
     private Vector2 TargetPos;
 
+    private Rigidbody2D rb;
+
 	// Use this for initialization
     new void Start ()
     {
+        rb = GetComponent<Rigidbody2D>();
         //Random.InitState((int)System.DateTime.Now.Ticks);
         CurrentBeat = Random.Range(0, 4);
 
@@ -35,8 +40,13 @@ public class RedShip : Enemy, IBeatListener, IPositionable{
 	// Update is called once per frame
 	void Update () {
 
-        GetComponent<Rigidbody2D>().MovePosition(Vector2.MoveTowards(transform.position, TargetPos, MoveSpeed * Time.deltaTime) );
+        //GetComponent<Rigidbody2D>().MovePosition(Vector2.MoveTowards(transform.position, TargetPos, MoveSpeed * Time.deltaTime) );
 	}
+
+    public void FixedUpdate()
+    {
+        rb.MovePosition(Vector2.MoveTowards(transform.position, TargetPos, MoveSpeed * Time.fixedDeltaTime));
+    }
 
 
     IEnumerator Fire()
@@ -92,12 +102,20 @@ public class RedShip : Enemy, IBeatListener, IPositionable{
     }
 
 
-    public override int Damage(int amt)
+    public override int Damage(int amt, int damColor)
     {
-        GetComponent<AudioSource>().clip = soundDamage;
+        if (damColor == GetColor())
+        {
+            GetComponent<AudioSource>().clip = soundDamage;
+        }
+        else
+        {
+            GetComponent<AudioSource>().clip = soundDeflect;
+        }
+
         GetComponent<AudioSource>().Play();
 
-        return base.Damage(amt);
+        return base.Damage(amt, damColor);
     }
 
     public override void Kill()

@@ -8,7 +8,7 @@ public class BeatGenerator : MonoBehaviour {
     protected static BeatGenerator Singleton;
 
     [SerializeField]
-    private AudioClip mainSong;
+    public AudioClip mainSong;
 
     [SerializeField]
     protected double BPM = 160.0;
@@ -51,7 +51,7 @@ public class BeatGenerator : MonoBehaviour {
         //Set up timing
         //nextBeat = AudioSettings.dspTime;
         //nextUpbeat = nextBeat + ((60.0 / BPM) / 2.0);
-        StartSong(120.0, mainSong, 2, -.03);
+        //StartSong(120.0, mainSong, 2, -.03);
 	}
 
     public void StartSong( double bpm, AudioClip song, double delay, double offset)
@@ -74,6 +74,11 @@ public class BeatGenerator : MonoBehaviour {
 	void Update () {
         if (!running)
             return;
+
+        if(Input.GetKeyDown("m"))
+        {
+            PlayMetronome = !PlayMetronome;
+        }
 
         if(!MusicPlayer.isPlaying)
         {
