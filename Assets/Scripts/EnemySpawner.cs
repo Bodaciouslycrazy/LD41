@@ -10,7 +10,7 @@ public class EnemySpawner : MonoBehaviour {
     public GameObject GreenShipPref;
     public GameObject BlueShipPref;
     public GameObject SmallShipPref;
-    public GameObject BossShip;
+    public GameObject BossShipPref;
 
     [SerializeField]
     private int StartPhase = 0;
@@ -149,7 +149,59 @@ public class EnemySpawner : MonoBehaviour {
                 NextPhase();
             else if(Spawned == 0)
             {
-                SpawnEnemy(BossShip, new Vector2(0, 3.5f));
+                SpawnEnemy(BossShipPref, new Vector2(0, 3.5f));
+            }
+        }
+        else if(Phase == 9)
+        {
+            if (Spawned == 4 && Enemies.Count == 0)
+                NextPhase();
+            else if(Spawned == 0)
+            {
+                SpawnEnemy(BlueShipPref, new Vector2(-3f, 3.5f));
+            }
+            else if(Spawned == 1 && PhaseTime > .3f)
+            {
+                SpawnEnemy(SmallShipPref, new Vector2(-1.5f, 3.5f));
+            }
+            else if(Spawned == 2 && PhaseTime > .6f)
+            {
+                SpawnEnemy(SmallShipPref, new Vector2(1.5f, 3.5f));
+            }
+            else if(Spawned == 3 && PhaseTime > .9f)
+            {
+                SpawnEnemy(SmallShipPref, new Vector2(3f, 3.5f));
+            }
+        }
+        else if(Phase == 10)
+        {
+            if (Spawned == 2 && Enemies.Count == 0)
+                NextPhase();
+            else if(Spawned == 0)
+            {
+                SpawnEnemy(RedShipPref, new Vector2(3, 3.5f));
+                SpawnEnemy(BlueShipPref, new Vector2(-3, 3.5f));
+            }
+        }
+        else if(Phase == 11)
+        {
+            if (Spawned == 2 && Enemies.Count == 0)
+                NextPhase();
+            else if(Spawned == 0)
+            {
+                SpawnEnemy(BossShipPref, new Vector2(-2f, 3.5f));
+            }
+            else if(Spawned == 1 && PhaseTime > 1f)
+            {
+                SpawnEnemy(SmallShipPref, new Vector2(2.5f, 3.5f));
+            }
+        }
+        else if(Phase == 234)
+        {
+            if(PhaseTime > 2f)
+            {
+                NextPhase();
+                //New Song?
             }
         }
 	}

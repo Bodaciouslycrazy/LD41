@@ -63,6 +63,7 @@ public class SmallShip : Enemy, IBeatListener, IPositionable
     // Update is called once per frame
     void Update()
     {
+        //Debug.Log("Speed: " + MoveSpeed);
         GetComponent<Rigidbody2D>().MovePosition(Vector2.MoveTowards(transform.position, TargetPos, MoveSpeed * Time.deltaTime));
     }
 

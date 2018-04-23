@@ -96,6 +96,10 @@ public class BossShip : Enemy, IBeatListener, IPositionable
 
         GameObject newBullet = Instantiate(BulletPref, transform.position, Quaternion.identity);
         newBullet.GetComponent<Bullet>().SetMotion(ang, speed);
+        newBullet = Instantiate(BulletPref, (Vector2)transform.position + new Vector2(1,0), Quaternion.identity);
+        newBullet.GetComponent<Bullet>().SetMotion(ang, speed);
+        newBullet = Instantiate(BulletPref, (Vector2)transform.position + new Vector2(-1,0), Quaternion.identity);
+        newBullet.GetComponent<Bullet>().SetMotion(ang, speed);
 
         yield break;
     }

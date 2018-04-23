@@ -51,7 +51,7 @@ public class BeatGenerator : MonoBehaviour {
         //Set up timing
         //nextBeat = AudioSettings.dspTime;
         //nextUpbeat = nextBeat + ((60.0 / BPM) / 2.0);
-        StartSong(120.0, mainSong, .01, 0);
+        StartSong(120.0, mainSong, 2, -.03);
 	}
 
     public void StartSong( double bpm, AudioClip song, double delay, double offset)

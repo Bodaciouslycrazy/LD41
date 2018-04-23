@@ -12,9 +12,6 @@ public class Bullet : Damageable {
     [SerializeField]
     private AudioClip destroySound;
 
-
-    private float debugSpeed = 0;
-
     //Fixed update called less, will cause less lag.
     private void FixedUpdate()
     {
@@ -29,7 +26,6 @@ public class Bullet : Damageable {
 
     public void SetMotion(Vector2 vel)
     {
-        debugSpeed = vel.magnitude;
         GetComponent<Rigidbody2D>().velocity = vel;
     }
 

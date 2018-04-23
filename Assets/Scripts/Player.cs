@@ -203,8 +203,9 @@ public class Player : Damageable, IBeatListener {
         SoundMaker2D.Singleton.PlayClipAtPoint(soundKill, transform.position, 1f);
 
         generator.RemoveListener(this);
-
         Singleton = null;
+
+        GameOver.IsGameOver = true;
 
         base.Kill();
     }
