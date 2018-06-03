@@ -1,27 +1,25 @@
 fileFormatVersion: 2
-guid: 5884014b55631ae42a417f11a3331abc
-timeCreated: 1524356930
-licenseType: Free
+guid: 061f3ea8b6c3e42449978086e320fe61
 TextureImporter:
   fileIDToRecycleName:
-    21300000: Bullet_Small1
-    21300002: Bullet_Small2
-    21300004: Bullet_Small3
-    21300006: Bullet_Small4
-    21300008: Bullet_Red1
-    21300010: Bullet_Red2
-    21300012: Bullet_Red3
-    21300014: Bullet_Red4
-    21300016: Bullet_Green1
-    21300018: Bullet_Green2
-    21300020: Bullet_Green3
-    21300022: Bullet_Green4
-    21300024: Bullet_Blue1
-    21300026: Bullet_Blue2
-    21300028: Bullet_Blue3
-    21300030: Bullet_Blue4
+    21300000: SmallBullet_0
+    21300002: SmallBullet_1
+    21300004: SmallBullet_2
+    21300006: SmallBullet_3
+    21300008: RedBullet_0
+    21300010: RedBullet_1
+    21300012: RedBullet_2
+    21300014: RedBullet_3
+    21300016: GreenBullet_0
+    21300018: GreenBullet_1
+    21300020: GreenBullet_2
+    21300022: GreenBullet_3
+    21300024: BlueBullet_0
+    21300026: BlueBullet_1
+    21300028: BlueBullet_2
+    21300030: BlueBullet_3
   externalObjects: {}
-  serializedVersion: 4
+  serializedVersion: 5
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -50,9 +48,9 @@ TextureImporter:
     filterMode: 0
     aniso: -1
     mipBias: -1
-    wrapU: 2
-    wrapV: 2
-    wrapW: 2
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
@@ -63,17 +61,19 @@ TextureImporter:
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 16
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spriteGenerateFallbackPhysicsShape: 0
+  spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
   textureType: 8
   textureShape: 1
+  singleChannelComponent: 0
   maxTextureSizeSet: 0
   compressionQualitySet: 0
   textureFormatSet: 0
   platformSettings:
-  - buildTarget: DefaultTexturePlatform
+  - serializedVersion: 2
+    buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -83,7 +83,8 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-  - buildTarget: Standalone
+  - serializedVersion: 2
+    buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -93,7 +94,8 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-  - buildTarget: iPhone
+  - serializedVersion: 2
+    buildTarget: iPhone
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -103,7 +105,19 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-  - buildTarget: Android
+  - serializedVersion: 2
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+  - serializedVersion: 2
+    buildTarget: WebGL
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -117,63 +131,87 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Bullet_Small1
+      name: SmallBullet_0
       rect:
         serializedVersion: 2
-        x: 4
-        y: 52
-        width: 8
-        height: 8
+        x: 0
+        y: 48
+        width: 16
+        height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 47a6915a8e0847740bb312c2a164ec53
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
-      name: Bullet_Small2
+      name: SmallBullet_1
       rect:
         serializedVersion: 2
-        x: 20
-        y: 52
-        width: 8
-        height: 8
+        x: 16
+        y: 48
+        width: 16
+        height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 8f6bdbb8c4e98934dbe26689a8195b79
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
-      name: Bullet_Small3
+      name: SmallBullet_2
       rect:
         serializedVersion: 2
-        x: 36
-        y: 52
-        width: 8
-        height: 8
+        x: 32
+        y: 48
+        width: 16
+        height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: cfa2256f263c9784895615ce8a1557cf
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
-      name: Bullet_Small4
+      name: SmallBullet_3
       rect:
         serializedVersion: 2
-        x: 52
-        y: 52
-        width: 8
-        height: 8
+        x: 48
+        y: 48
+        width: 16
+        height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 438d6bfe2e6412c45b38ba287f6570e2
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
-      name: Bullet_Red1
+      name: RedBullet_0
       rect:
         serializedVersion: 2
         x: 0
@@ -186,8 +224,14 @@ TextureImporter:
       outline: []
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 6826e52426eb32d4e9d568be2b316821
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
-      name: Bullet_Red2
+      name: RedBullet_1
       rect:
         serializedVersion: 2
         x: 16
@@ -200,8 +244,14 @@ TextureImporter:
       outline: []
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: b2a1ce27685c1c943a57bcb6852f41c6
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
-      name: Bullet_Red3
+      name: RedBullet_2
       rect:
         serializedVersion: 2
         x: 32
@@ -214,8 +264,14 @@ TextureImporter:
       outline: []
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 7f9a4f655d64f0341ba8572c0bfbb633
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
-      name: Bullet_Red4
+      name: RedBullet_3
       rect:
         serializedVersion: 2
         x: 48
@@ -228,8 +284,14 @@ TextureImporter:
       outline: []
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: a38acc2168a02d2459ece1579825506b
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
-      name: Bullet_Green1
+      name: GreenBullet_0
       rect:
         serializedVersion: 2
         x: 0
@@ -242,8 +304,14 @@ TextureImporter:
       outline: []
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 3b70784b7f92a8044ab82e2a07085239
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
-      name: Bullet_Green2
+      name: GreenBullet_1
       rect:
         serializedVersion: 2
         x: 16
@@ -256,8 +324,14 @@ TextureImporter:
       outline: []
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 200cfa8d58d268743b86a934f7aa92fe
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
-      name: Bullet_Green3
+      name: GreenBullet_2
       rect:
         serializedVersion: 2
         x: 32
@@ -270,8 +344,14 @@ TextureImporter:
       outline: []
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 313f7d15b35427c4898a7b260656a7df
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
-      name: Bullet_Green4
+      name: GreenBullet_3
       rect:
         serializedVersion: 2
         x: 48
@@ -284,8 +364,14 @@ TextureImporter:
       outline: []
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 7700d050bac6d714f9d25678a5d68561
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
-      name: Bullet_Blue1
+      name: BlueBullet_0
       rect:
         serializedVersion: 2
         x: 0
@@ -298,8 +384,14 @@ TextureImporter:
       outline: []
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 9e3686809ce0fb74f9f1c563f7243a50
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
-      name: Bullet_Blue2
+      name: BlueBullet_1
       rect:
         serializedVersion: 2
         x: 16
@@ -312,8 +404,14 @@ TextureImporter:
       outline: []
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: f0bc981bee7e5dd40b0d03f0a29ab98b
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
-      name: Bullet_Blue3
+      name: BlueBullet_2
       rect:
         serializedVersion: 2
         x: 32
@@ -326,8 +424,14 @@ TextureImporter:
       outline: []
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 0a79014194f5236438ac3d2083b74f50
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
-      name: Bullet_Blue4
+      name: BlueBullet_3
       rect:
         serializedVersion: 2
         x: 48
@@ -340,8 +444,20 @@ TextureImporter:
       outline: []
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 6a6663255f6f2cd4787ff7b6fe2c5d9c
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
+    bones: []
+    spriteID: 1556ed8c31bf1e24ab9c1aac1f2adaee
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
   spritePackingTag: 
   userData: 
   assetBundleName: 

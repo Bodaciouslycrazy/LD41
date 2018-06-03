@@ -7,27 +7,39 @@ public class BeatGenerator : MonoBehaviour {
 
     protected static BeatGenerator Singleton;
 
-    [SerializeField]
-    public AudioClip mainSong;
-
-    [SerializeField]
-    protected double BPM = 160.0;
-    protected double nextBeat = 0;
-    protected double nextUpbeat = 0;
-
+    
+    [Header("Scene References")]
     [SerializeField]
     private AudioSource MetronomePlayer;
     [SerializeField]
     private AudioSource MusicPlayer;
 
+    [Header("Variables")]
+    [SerializeField]
+    public AudioClip mainSong;
+    [SerializeField]
+    protected float BPM = 160f;
+    [SerializeField]
+    [Range(0, .5f)]
+    protected float Window = .2f;
+    [SerializeField]
+    protected bool PlayMetronome = true;
+
+
+    //********Private variables.********
+
+    //protected double TempoStart = 0;
+    protected int NextBeat = 0;
+    protected int NextUpbeat = 0;
+    protected bool running = false;
+
+    protected float BeatDelay = .0f;
+    //protected double AudioDelay = 0;
 
     protected List<IBeatListener> Listeners;
 
-    [SerializeField]
-    protected bool PlayMetronome = true;
+    
     protected bool tickPlayed = false;
-
-    public bool running = true;
 
 
     private void Awake()
@@ -54,65 +66,77 @@ public class BeatGenerator : MonoBehaviour {
         //StartSong(120.0, mainSong, 2, -.03);
 	}
 
-    public void StartSong( double bpm, AudioClip song, double delay, double offset)
-    {
-        BPM = bpm;
-
-        nextBeat = AudioSettings.dspTime + delay;
-        nextUpbeat = nextBeat + ((60.0 / BPM) / 2.0);
-
-        MusicPlayer.clip = song;
-        MusicPlayer.PlayScheduled(nextBeat + offset);
-    }
-
     public static BeatGenerator GetSingleton()
     {
         return Singleton;
     }
+
+
+    public void StartSong( float bpm, AudioClip song)
+    {
+        BPM = bpm;
+
+        running = true;
+        NextBeat = 0;
+        NextUpbeat = 0;
+
+        //BeatDelay = bdelay;
+        //AudioDelay = adelay;
+
+        //TempoStart = AudioSettings.dspTime + BeatDelay;
+
+        MusicPlayer.clip = song;
+        MusicPlayer.PlayScheduled(AudioSettings.dspTime);
+    }
 	
+
 	// Update is called once per frame
 	void Update () {
         if (!running)
             return;
 
+        //Turn on the metronome.
         if(Input.GetKeyDown("m"))
         {
             PlayMetronome = !PlayMetronome;
         }
 
-        if(!MusicPlayer.isPlaying)
+        
+        if(!MusicPlayer.isPlaying && !PlayMetronome)
         {
             //Start song again!
-            StartSong(BPM, MusicPlayer.clip, .01, 0);
+            StartSong(BPM, MusicPlayer.clip);
         }
+        
 
-        if(AudioSettings.dspTime >= nextBeat)
+        //Check if the next beat has been played
+        if( MusicPlayer.time >= GetBeatAbsoluteTime(NextBeat))
         {
             tickPlayed = true;
             CallBeat();
-
-            //Calculate next tick, and send a schedule for the audio player.
-            nextBeat += (60.0 / BPM);
         }
 
-        if (AudioSettings.dspTime >= nextUpbeat)
+        //Check if the next upbeat has been played
+        if ( MusicPlayer.time >= GetUpbeatAbsoluteTime(NextUpbeat))
         {
             CallUpbeat();
-
-            //Calculate next tick, and send a schedule for the audio player.
-            nextUpbeat += (60.0 / BPM);
         }
 
-        if (PlayMetronome && tickPlayed && !MetronomePlayer.isPlaying)
+        //move the beat to the next beat
+        while( MusicPlayer.time >= GetBeatAbsoluteTime(NextBeat))
         {
-            tickPlayed = false;
-            MetronomePlayer.PlayScheduled(nextBeat);
+            NextBeat++;
+        }
+
+        //move the upbeat to the next upbeat
+        while( MusicPlayer.time >= GetUpbeatAbsoluteTime(NextUpbeat))
+        {
+            NextUpbeat++;
         }
 	}
 
     protected void CallBeat()
     {
-        //Debug.Log("Calling " + Listeners.Count + " listeners.");
         for(int i = 0; i < Listeners.Count; i++)
         {
             Listeners[i].OnBeat();
@@ -125,34 +149,62 @@ public class BeatGenerator : MonoBehaviour {
         {
             Listeners[i].OnUpbeat();
         }
+
+        if(PlayMetronome)
+        {
+            MetronomePlayer.PlayScheduled(GetBeatAbsoluteTime(NextBeat) - BeatDelay);
+        }
     }
 
-    public double GetNextBeat()
+    public bool IsInWindow(float adjust = 0f)
     {
-        return nextBeat;
+        //Which beat do I compare to?
+        //int compBeat = NextBeat;
+        int compBeat = NextUpbeat;
+        float curTime = MusicPlayer.time + adjust + BeatDelay;
+        
+        /*
+        if (Mathf.Abs((float)(curTime - GetBeatAbsoluteTime(compBeat - 1))) < Mathf.Abs((float)(curTime - GetBeatAbsoluteTime(compBeat))))
+            compBeat -= 1;
+            */
+        
+
+        double diff = Mathf.Abs(curTime - GetBeatAbsoluteTime(compBeat));
+
+
+        TimingPanel.Singleton.AddTick( (curTime - GetBeatAbsoluteTime(compBeat)) / (60f / BPM) );
+
+        return (diff <= (60.0 / BPM) * (Window / 2.0));
     }
 
-    public double GetLastBeat()
+    #region GettersAndSetters
+
+    public int GetNextBeatIndex()
     {
-        return nextBeat - (60.0 / BPM);
+        return NextBeat;
     }
 
-    public double GetNextUpbeat()
+    public int GetNextUpbeatIndex()
     {
-        return nextUpbeat;
+        return NextUpbeat;
     }
 
-    public double GetLastUpbeat()
+    public float GetBeatAbsoluteTime(int beat)
     {
-        return nextUpbeat - (60.0 / BPM);
+        return (beat * 60f / BPM) + BeatDelay;
     }
 
-    public double GetBPM()
+    public float GetUpbeatAbsoluteTime(int upbeat)
+    {
+        return GetBeatAbsoluteTime(upbeat) + ((60f / BPM) / 2f);
+    }
+
+    public float GetBPM()
     {
         return BPM;
     }
 
-    public void SetBPM(double bpm)
+    public void SetBPM(float bpm)
     {
         BPM = bpm;
     }
@@ -166,4 +218,11 @@ public class BeatGenerator : MonoBehaviour {
     {
         Listeners.Remove(lsn);
     }
+
+    public void SetMetronome(bool met)
+    {
+        PlayMetronome = met;
+    }
+
+    #endregion
 }

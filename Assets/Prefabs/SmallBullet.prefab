@@ -96,6 +96,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &114104761133775104
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -109,7 +110,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxHealth: 1
   Health: 1
-  Timeout: 5
+  Color: 1
   destroySound: {fileID: 0}
 --- !u!212 &212642323792547394
 SpriteRenderer:
@@ -124,6 +125,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
@@ -145,7 +147,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 5884014b55631ae42a417f11a3331abc, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 061f3ea8b6c3e42449978086e320fe61, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

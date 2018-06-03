@@ -54,13 +54,15 @@ public class UIState : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+		/*
         if (Input.GetKey("escape"))
             Application.Quit();
+			*/
 
         if ((CurState == State.LOSE || CurState == State.WIN) && (Input.GetKeyDown("return") || Input.GetKeyDown("enter")))
         {
             Player.Freeze = true;
-            EnemySpawner.Running = false;
+            //EnemySpawner.Running = false;
             SceneManager.LoadScene("Test");
         }
 
@@ -68,7 +70,8 @@ public class UIState : MonoBehaviour {
         if (CurState == State.TITLE && TimeBucket > StartDelay)
         {
             UIState.Singleton.SetState(UIState.State.PLAYING);
-            EnemySpawner.Running = true;
+			BeatGenerator.GetSingleton().StartSong(BeatGenerator.GetSingleton().GetBPM(), BeatGenerator.GetSingleton().mainSong);
+            //EnemySpawner.Running = true;
             Player.Freeze = false;
         }
     }

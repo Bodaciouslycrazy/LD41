@@ -40,6 +40,7 @@ GameObject:
   - component: {fileID: 60908529849637932}
   - component: {fileID: 50843481605904430}
   - component: {fileID: 114088242973684460}
+  - component: {fileID: 114218084450977468}
   - component: {fileID: 82234876092622590}
   m_Layer: 0
   m_Name: SmallShip
@@ -134,7 +135,8 @@ AudioSource:
   m_GameObject: {fileID: 1854971410255996}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 243439567837604406, guid: d933e137840aabe4c9a70130738e7896,
+    type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -155,54 +157,69 @@ AudioSource:
   rolloffCustomCurve:
     serializedVersion: 2
     m_Curve:
-    - serializedVersion: 2
+    - serializedVersion: 3
       time: 0
       value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
-    - serializedVersion: 2
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
       time: 1
       value: 0
       inSlope: 0
       outSlope: 0
       tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
   panLevelCustomCurve:
     serializedVersion: 2
     m_Curve:
-    - serializedVersion: 2
+    - serializedVersion: 3
       time: 0
       value: 0
       inSlope: 0
       outSlope: 0
       tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
   spreadCustomCurve:
     serializedVersion: 2
     m_Curve:
-    - serializedVersion: 2
+    - serializedVersion: 3
       time: 0
       value: 0
       inSlope: 0
       outSlope: 0
       tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
   reverbZoneMixCustomCurve:
     serializedVersion: 2
     m_Curve:
-    - serializedVersion: 2
+    - serializedVersion: 3
       time: 0
       value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
@@ -223,6 +240,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &114088242973684460
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -237,12 +255,36 @@ MonoBehaviour:
   MaxHealth: 1
   Health: 1
   Color: 0
-  BulletPref: {fileID: 1320287327142896, guid: b16624ab7aee6724b99ff9dda00ff5e0, type: 2}
+  BeatCount: 4
+  MoveSpeed: 4
   soundDamage: {fileID: 8300000, guid: 51a53d7892e060d4cbe659128da390dd, type: 3}
   soundDestroy: {fileID: 8300000, guid: 2e83a33a49d727542868de3566b56fb3, type: 3}
   soundFire: {fileID: 8300000, guid: f2ae6852cf89ec943b66b09b1c18fc14, type: 3}
   soundDeflect: {fileID: 8300000, guid: 5212ae1c2ba3156489a7723403943fd7, type: 3}
-  MoveSpeed: 2
+--- !u!114 &114218084450977468
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1854971410255996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19dd7f4a7a8abd847af776c4bcb12373, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TargetMode: 0
+  FireRate: 1
+  SpinSpeed: 0
+  TotalShots: 1
+  BulletsPerShot: 3
+  Spread: 60
+  DeltaSpread: 0
+  BulletPref: {fileID: 1320287327142896, guid: b16624ab7aee6724b99ff9dda00ff5e0, type: 2}
+  SpawnDistance: 0.5
+  StartVelocity: 3
+  EndVelocity: 3
+  Acceleration: 0
+  AccelDelay: 0
 --- !u!212 &212436149969068614
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -256,6 +298,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
@@ -300,6 +343,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:

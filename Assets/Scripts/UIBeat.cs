@@ -24,7 +24,9 @@ public class UIBeat : MonoBehaviour, IBeatListener {
     {
         float dip = 0;
         if (Time.time < DipEnd)
-            dip = Mathf.Pow(0.5f, 5 * (Time.time - DipStart) / (DipEnd - DipStart));
+        {
+            dip = 1 - ((Time.time - DipStart) / (DipEnd - DipStart));
+        }
 
         rect.anchoredPosition = Center + new Vector2(0, dip * -BeatDip);
     }
@@ -33,11 +35,10 @@ public class UIBeat : MonoBehaviour, IBeatListener {
     {
         DipStart = Time.time;
         DipEnd = DipStart + .2f;
-        //rect.anchoredPosition = new Vector2(rect.anchoredPosition.x, -BeatDip);
     }
 
     public void OnUpbeat()
     {
-
+        //do nothing?
     }
 }
