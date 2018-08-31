@@ -38,10 +38,10 @@ public class PauseManager : MonoBehaviour {
 	{
 		Time.timeScale = 0;
 
-		IPauseable[] objects = (IPauseable[])FindObjectsOfType(typeof(IPauseable));
-		foreach (IPauseable obj in objects)
+		GameObject[] objects = (GameObject[])FindObjectsOfType(typeof(GameObject));
+		foreach (GameObject obj in objects)
 		{
-			obj.OnPause();
+			obj.SendMessage("OnPauseGame", SendMessageOptions.DontRequireReceiver);
 		}
 	}
 
@@ -49,10 +49,10 @@ public class PauseManager : MonoBehaviour {
 	{
 		Time.timeScale = 1;
 
-		IPauseable[] objects = (IPauseable[])FindObjectsOfType(typeof(IPauseable));
-		foreach (IPauseable obj in objects)
+		GameObject[] objects = (GameObject[])FindObjectsOfType(typeof(GameObject));
+		foreach (GameObject obj in objects)
 		{
-			obj.OnResume();
+			obj.SendMessage("OnResumeGame", SendMessageOptions.DontRequireReceiver);
 		}
 	}
 

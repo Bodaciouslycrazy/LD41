@@ -22,8 +22,11 @@ public class BeatGenerator : MonoBehaviour {
     [SerializeField]
     [Range(0, .5f)]
     protected float Window = .2f;
-    [SerializeField]
+	[SerializeField]
+	protected bool running = false;
+	[SerializeField]
     protected bool PlayMetronome = true;
+
 
 
     //********Private variables.********
@@ -31,9 +34,9 @@ public class BeatGenerator : MonoBehaviour {
     //protected double TempoStart = 0;
     protected int NextBeat = 0;
     protected int NextUpbeat = 0;
-    protected bool running = false;
 
-    protected float BeatDelay = .0f;
+	//protected float BeatDelay = 0f;
+	//protected float WindowAdjust = 0f;
     //protected double AudioDelay = 0;
 
     protected List<IBeatListener> Listeners;
@@ -86,8 +89,14 @@ public class BeatGenerator : MonoBehaviour {
         //TempoStart = AudioSettings.dspTime + BeatDelay;
 
         MusicPlayer.clip = song;
-        MusicPlayer.PlayScheduled(AudioSettings.dspTime);
+        MusicPlayer.PlayScheduled(AudioSettings.dspTime + 0.1);
     }
+
+	public void StopSong()
+	{
+		running = false;
+		MusicPlayer.Stop();
+	}
 	
 
 	// Update is called once per frame
@@ -102,11 +111,13 @@ public class BeatGenerator : MonoBehaviour {
         }
 
         
+		
         if(!MusicPlayer.isPlaying && !PlayMetronome)
         {
             //Start song again!
             StartSong(BPM, MusicPlayer.clip);
         }
+		
         
 
         //Check if the next beat has been played
@@ -141,6 +152,8 @@ public class BeatGenerator : MonoBehaviour {
         {
             Listeners[i].OnBeat();
         }
+
+		
     }
 
     protected void CallUpbeat()
@@ -152,34 +165,55 @@ public class BeatGenerator : MonoBehaviour {
 
         if(PlayMetronome)
         {
-            MetronomePlayer.PlayScheduled(GetBeatAbsoluteTime(NextBeat) - BeatDelay);
+			float playDistance = GetBeatAbsoluteTime(NextBeat) - MusicPlayer.time;
+
+            MetronomePlayer.PlayScheduled(AudioSettings.dspTime +  playDistance);
+			//Debug.Log("met schedulued: " + (GetBeatAbsoluteTime(NextBeat) - BeatDelay));
         }
     }
 
-    public bool IsInWindow(float adjust = 0f)
+    public bool IsInWindow()
     {
-        //Which beat do I compare to?
-        //int compBeat = NextBeat;
+		float inputDelay = .07f;
+
         int compBeat = NextUpbeat;
-        float curTime = MusicPlayer.time + adjust + BeatDelay;
-        
-        /*
-        if (Mathf.Abs((float)(curTime - GetBeatAbsoluteTime(compBeat - 1))) < Mathf.Abs((float)(curTime - GetBeatAbsoluteTime(compBeat))))
-            compBeat -= 1;
-            */
-        
+		float pressTime = MusicPlayer.time - inputDelay; // + WindowAdjust;
 
-        double diff = Mathf.Abs(curTime - GetBeatAbsoluteTime(compBeat));
+		float beatTime = GetBeatAbsoluteTime(compBeat);
 
+		float windowSize = (60f / BPM) * Window;
 
-        TimingPanel.Singleton.AddTick( (curTime - GetBeatAbsoluteTime(compBeat)) / (60f / BPM) );
+		TimingPanel.Singleton.AddTick((pressTime - beatTime) / (60f / BPM));
 
-        return (diff <= (60.0 / BPM) * (Window / 2.0));
+		return (beatTime - (windowSize / 2f) <= pressTime) && (pressTime <= beatTime + (windowSize / 2f));
     }
 
-    #region GettersAndSetters
+	#region PauseFunctions
 
-    public int GetNextBeatIndex()
+	void OnPauseGame()
+	{
+		running = false;
+
+		MusicPlayer.Pause();
+	}
+
+	void OnResumeGame()
+	{
+		running = true;
+
+		MusicPlayer.UnPause();
+	}
+
+	#endregion
+
+	#region GettersAndSetters
+
+	public float GetSongPosition()
+	{
+		return MusicPlayer.time;
+	}
+
+	public int GetNextBeatIndex()
     {
         return NextBeat;
     }
@@ -191,13 +225,23 @@ public class BeatGenerator : MonoBehaviour {
 
     public float GetBeatAbsoluteTime(int beat)
     {
-        return (beat * 60f / BPM) + BeatDelay;
+        return (beat * 60f / BPM);
     }
 
     public float GetUpbeatAbsoluteTime(int upbeat)
     {
         return GetBeatAbsoluteTime(upbeat) + ((60f / BPM) / 2f);
     }
+
+	public float GetSongCurrentTime()
+	{
+		return MusicPlayer.time;
+	}
+
+	public float GetWindow()
+	{
+		return Window;
+	}
 
     public float GetBPM()
     {

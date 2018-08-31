@@ -8,8 +8,12 @@ public class TimingPanel : MonoBehaviour {
 
     [SerializeField]
     private GameObject TickPref;
+	[SerializeField]
+	private RectTransform LeftWindow;
+	[SerializeField]
+	private RectTransform RightWindow;
     [SerializeField]
-    private int MaxTicks = 10;
+    private int MaxTicks = 3;
 
 
     private List<GameObject> Ticks;
@@ -19,6 +23,12 @@ public class TimingPanel : MonoBehaviour {
         Singleton = this;
 
         Ticks = new List<GameObject>();
+
+		//Initialize window ticks to match the current beat window.
+		float winDist = BeatGenerator.GetSingleton().GetWindow() * 100;
+
+		LeftWindow.anchoredPosition = new Vector2(-winDist, 0);
+		RightWindow.anchoredPosition = new Vector2(winDist, 0);
 	}
 	
 	public void AddTick(float perc)

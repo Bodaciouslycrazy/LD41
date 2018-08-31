@@ -17,6 +17,7 @@ public class Player : Damageable, IBeatListener {
 	protected BeatGenerator generator;
 
 	public static bool Freeze = true;
+	private bool Paused = false;
 
 	private bool Fired = false;
 
@@ -42,7 +43,23 @@ public class Player : Damageable, IBeatListener {
 	[SerializeField]
 	private GameObject OffBeatPref;
 
-	// Use this for initialization
+	[Header("Obj References")]
+	[SerializeField]
+	private AudioSource ASRocketSound;
+	[SerializeField]
+	private AudioSource ASLaserSound;
+
+
+	private bool InputBlue = false;
+	private bool InputGreen = false;
+	private bool InputRed = false;
+
+
+
+	/// <summary>
+	/// Sets up the singleton.
+	/// Adds the player to the beat generator.
+	/// </summary>
 	void Start () {
 		if(Singleton == null)
 		{
@@ -53,13 +70,20 @@ public class Player : Damageable, IBeatListener {
 			Destroy(gameObject);
 		}
 
+		Application.targetFrameRate = 60;
+		//QualitySettings.maxQueuedFrames = 0;
 		generator = BeatGenerator.GetSingleton();
 		generator.AddListener(this);
 	}
 
+
+	/// <summary>
+	/// Manages all the movement from WASD.
+	/// Does square to circle calculation thingey. Probably don't need to do this with joysticks.
+	/// </summary>
 	public void FixedUpdate()
 	{
-		if (Freeze)
+		if (Freeze || Paused)
 			return;
 
 		//Get input axies
@@ -71,34 +95,67 @@ public class Player : Damageable, IBeatListener {
 		float xCirc = horz * Mathf.Sqrt(1f - (Mathf.Pow(vert, 2) / 2f));
 		float yCirc = vert * Mathf.Sqrt(1f - (Mathf.Pow(horz, 2) / 2f));
 
-		GetComponent<Rigidbody2D>().velocity = new Vector2(xCirc, yCirc) * MaxSpeed;
+		Vector2 inputVector = 1.2f * new Vector2(xCirc, yCirc);
+		if (inputVector.magnitude > 1f)
+			inputVector.Normalize();
+
+		GetComponent<Rigidbody2D>().velocity = inputVector * MaxSpeed;
+
+		LaserUpdate();
 	}
 
 
-	// Update is called once per frame
+	/// <summary>
+	/// Update used for shooting lazers.
+	/// Checks to make sure lazer is on beat.
+	/// </summary>
 	void Update () {
 	
-		if(Freeze)
+		
+	}
+
+	private void LaserUpdate()
+	{
+		if (Freeze || Paused)
 		{
 			return;
 		}
 
+		bool blue = Input.GetButton("FireBlue");
+		bool green = Input.GetButton("FireGreen");
+		bool red = Input.GetButton("FireRed");
+
+		bool bluePressed = blue && !InputBlue;
+		bool greenPressed = green && !InputGreen;
+		bool redPressed = red && !InputRed;
+		bool laserPressed = bluePressed || greenPressed || redPressed;
+
+		InputBlue = blue;
+		InputGreen = green;
+		InputRed = red;
 
 		//Check for firing on beat
-		ColorEnum? col = GetColorShot();
+		//ColorEnum? col = GetColorShot();
 
-		if( Fired == false && col != null )
+		if (Fired == false && laserPressed)
 		{
 			//Consume shot, even if it wasn't on beat.
 			Fired = true;
+			ColorEnum col = ColorEnum.BLUE;
 
-			//Check that shot was on beat
-			//double window = (60.0 / generator.GetBPM()) * BeatWindow;
+			if (bluePressed)
+				col = ColorEnum.BLUE;
+			else if (greenPressed)
+				col = ColorEnum.GREEN;
+			else
+				col = ColorEnum.RED;
 
-			if( BeatGenerator.GetSingleton().IsInWindow(0f) )
+
+			//Fire laser if player was inside the window.
+			if (BeatGenerator.GetSingleton().IsInWindow())
 			{
-				//Fire on time!
-				GetComponent<AudioSource>().PlayOneShot(soundFire, 1f);
+				//Fired on time!
+				ASLaserSound.volume = 1f;
 
 				//Do the raycast
 				RaycastHit2D hit = Physics2D.Raycast((Vector2)transform.position, new Vector2(0, 1), 50f);
@@ -110,7 +167,7 @@ public class Player : Damageable, IBeatListener {
 				if (hit.transform != null)
 				{
 					Damageable other = hit.transform.gameObject.GetComponent<Damageable>();
-					if(other != null)
+					if (other != null)
 					{
 						other.Damage(1, (ColorEnum)col);
 					}
@@ -119,12 +176,19 @@ public class Player : Damageable, IBeatListener {
 			else
 			{
 				//Missed the fire window...
-				GetComponent<AudioSource>().PlayOneShot(soundMissBeat, 1f);
-				Instantiate(OffBeatPref, transform.position + new Vector3(0,2,0), Quaternion.identity);
+				SoundMaker2D.Singleton.PlayClipAtPoint(soundMissBeat, Camera.main.transform, 1f);
+				Instantiate(OffBeatPref, transform.position + new Vector3(0, 2, 0), Quaternion.identity);
 			}
 		}
 	}
 
+
+	/// <summary>
+	/// Returns the color that the player shot this frame.
+	/// Return null if the player didn't shoot.
+	/// </summary>
+	/// <returns></returns>
+	/*
 	private ColorEnum? GetColorShot()
 	{
 		bool blue = Input.GetKeyDown(KeyCode.LeftArrow);
@@ -140,7 +204,15 @@ public class Player : Damageable, IBeatListener {
 		else
 			return null;
 	}
+	*/
 
+
+	/// <summary>
+	/// Creates the lazer visual thingey.
+	/// </summary>
+	/// <param name="col"> Color </param>
+	/// <param name="start"> Start position </param>
+	/// <param name="end"> End Position </param>
 	private void ShootLazer(ColorEnum col, Vector2 start, Vector2 end)
 	{
 		//Shake Camera
@@ -164,27 +236,38 @@ public class Player : Damageable, IBeatListener {
 		obj.GetComponent<SpriteRenderer>().color = c;
 
 		obj = Instantiate(LazerBeamPref, Vector2.Lerp(start, end, 0.5f), transform.rotation);
-		obj.GetComponent<Transform>().localScale = new Vector3(1, Vector2.Distance(start, end) + .75f  , 1);
+		//obj.GetComponent<Transform>().localScale = new Vector3(1, Vector2.Distance(start, end) + .75f  , 1);
 		obj.GetComponent<SpriteRenderer>().color = c;
+		Vector2 newSize = obj.GetComponent<SpriteRenderer>().size;
+		newSize.y = Vector2.Distance(start, end);
+		obj.GetComponent<SpriteRenderer>().size = newSize; 
 	}
 
 	public void OnBeat()
 	{
 
-		/*
-		oldPos = targetPos;
-		targetPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-		easeStart = Time.time;
-		easeEnd = easeStart + (60f / (float)generator.GetBPM() ) * 0.8f;
-		*/
 	}
 
 	public void OnUpbeat()
 	{
 		Fired = false;
+
+		//LASER SOUND EFFECT
+		//Schedule the laser sound on the beat, but set its volume to 0.
+		//Now, when they actually fire, just turn the folume up immediately.
+		BeatGenerator bg = BeatGenerator.GetSingleton();
+
+		float disp = bg.GetBeatAbsoluteTime(bg.GetNextBeatIndex()) - bg.GetSongCurrentTime();
+		ASLaserSound.volume = 0f;
+		ASLaserSound.PlayScheduled(AudioSettings.dspTime + disp);
 	}
 
+
+	/// <summary>
+	/// Checks for collisions with bullets.
+	/// When you collide with a bullet, hurt the player.
+	/// </summary>
+	/// <param name="collision"></param>
 	public void OnTriggerEnter2D(Collider2D collision)
 	{
 		if(collision.tag == "Bullet")
@@ -196,7 +279,12 @@ public class Player : Damageable, IBeatListener {
 		}
 	}
 
-	//Methods from Damageable
+	/// <summary>
+	/// Damages the player.
+	/// </summary>
+	/// <param name="amt"></param>
+	/// <param name="damColor"></param>
+	/// <returns></returns>
 	public override int Damage(int amt, ColorEnum damColor)
 	{
 		//play sound?
@@ -211,6 +299,10 @@ public class Player : Damageable, IBeatListener {
 			return base.Damage(amt, damColor);
 	}
 
+
+	/// <summary>
+	/// Kills the player.
+	/// </summary>
 	public override void Kill()
 	{
 		//play sound?
@@ -224,4 +316,22 @@ public class Player : Damageable, IBeatListener {
 
 		base.Kill();
 	}
+
+	#region PauseHandler
+
+	void OnPauseGame()
+	{
+		Paused = true;
+
+		ASRocketSound.Pause();
+	}
+
+	void OnResumeGame()
+	{
+		Paused = false;
+
+		ASRocketSound.UnPause();
+	}
+
+	#endregion
 }
